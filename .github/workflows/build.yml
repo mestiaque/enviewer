@@ -51,17 +51,17 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
 
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm typecheck
-      - run: pnpm test
-      - run: cargo test --workspace
-
-      - name: Copy libheif DLLs next to the executable (Windows)
+      - name: Copy libheif DLLs (Windows; tauri.windows.conf.json bundles them, cargo test needs them too)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path src-tauri/dlls | Out-Null
           Copy-Item "$env:LIBHEIF_DIR\bin\*.dll" src-tauri/dlls/
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: cargo test --workspace
 
       - name: Bundle
         run: pnpm tauri build --bundles ${{ matrix.bundles }} ${{ runner.os == 'Windows' && '--config src-tauri/tauri.windows.conf.json' || '' }}
