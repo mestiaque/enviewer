@@ -30,6 +30,9 @@ jobs:
           - os: windows-latest
             bundles: nsis
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 75
+    env:
+      DEBIAN_FRONTEND: noninteractive
     steps:
       - uses: actions/checkout@v4
 
