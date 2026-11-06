@@ -36,7 +36,13 @@ pub fn open_external(app: AppHandle, path: String) -> Result<()> {
 /// webview cannot use this to open arbitrary URLs.
 #[tauri::command]
 pub fn contact_developer(app: AppHandle) -> Result<()> {
-    app.opener().open_url("mailto:natoreit20@gmail.com?subject=ENViewer", None::<&str>).map_err(join_err)
+    app.opener().open_url("mailto:info@mestiaque.com?subject=ENViewer", None::<&str>).map_err(join_err)
+}
+
+/// Opens the developer's website (About → Website). Fixed URL, like contact_developer.
+#[tauri::command]
+pub fn open_developer_website(app: AppHandle) -> Result<()> {
+    app.opener().open_url("https://mestiaque.com", None::<&str>).map_err(join_err)
 }
 
 #[tauri::command]

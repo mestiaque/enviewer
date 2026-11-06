@@ -84,6 +84,7 @@ export const api = {
 
   revealInFolder: (path: string) => invoke<void>("reveal_in_folder", { path }),
   contactDeveloper: () => invoke<void>("contact_developer"),
+  openDeveloperWebsite: () => invoke<void>("open_developer_website"),
   checkUpdate: () => invoke<UpdateInfo | null>("check_update"),
   installUpdate: (info: UpdateInfo) => invoke<"restart" | "exiting">("install_update", { info }),
   restartApp: () => invoke<void>("restart_app"),

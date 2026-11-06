@@ -99,4 +99,4 @@ GitHub Actions builds the `.deb`, AppImage and the Windows installer and attache
 
 ## Developer
 
-ENViewer is developed by **Estiaque** · <natoreit20@gmail.com>. Bug reports and ideas are welcome.
+ENViewer is developed by **M. Estiaque Ahmed Khan** · <info@mestiaque.com> · [mestiaque.com](https://mestiaque.com). Bug reports and ideas are welcome.

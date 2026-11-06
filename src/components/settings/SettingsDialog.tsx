@@ -382,7 +382,7 @@ export function SettingsDialog() {
               <div className="divide-y divide-line rounded-lg bg-raised px-3">
                 <div className="flex items-center justify-between py-2.5">
                   <span>Developed by</span>
-                  <span className="text-muted">Estiaque</span>
+                  <span className="text-muted">M. Estiaque Ahmed Khan</span>
                 </div>
                 <div className="flex items-center justify-between py-2.5">
                   <span>
@@ -391,9 +391,15 @@ export function SettingsDialog() {
                   </span>
                   <button
                     className="text-accent hover:underline"
-                    onClick={() => api.contactDeveloper().catch(() => toast({ kind: "error", title: "No mail app found", detail: "natoreit20@gmail.com" }))}
+                    onClick={() => api.contactDeveloper().catch(() => toast({ kind: "error", title: "No mail app found", detail: "info@mestiaque.com" }))}
                   >
-                    natoreit20@gmail.com
+                    info@mestiaque.com
+                  </button>
+                </div>
+                <div className="flex items-center justify-between py-2.5">
+                  <span>Website</span>
+                  <button className="text-accent hover:underline" onClick={() => void api.openDeveloperWebsite().catch(() => {})}>
+                    mestiaque.com
                   </button>
                 </div>
                 <div className="flex items-center justify-between py-2.5">
@@ -405,7 +411,7 @@ export function SettingsDialog() {
                 </div>
                 <div className="flex items-center justify-between py-2.5">
                   <span>Copyright</span>
-                  <span className="text-muted">© 2026 Estiaque · MIT</span>
+                  <span className="text-muted">© 2026 M. Estiaque Ahmed Khan · MIT</span>
                 </div>
               </div>
             </div>

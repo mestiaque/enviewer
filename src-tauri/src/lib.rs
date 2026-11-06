@@ -96,6 +96,7 @@ pub fn run() {
             data::save_edit,
             files::reveal_in_folder,
             files::contact_developer,
+            files::open_developer_website,
             update::check_update,
             update::install_update,
             update::restart_app,

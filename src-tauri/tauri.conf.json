@@ -2,7 +2,7 @@
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "ENViewer",
   "mainBinaryName": "enviewer",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "identifier": "app.lumen.viewer",
   "build": {
     "beforeDevCommand": "pnpm dev",
@@ -32,11 +32,11 @@
   "bundle": {
     "active": true,
     "targets": "all",
-    "publisher": "Estiaque",
+    "publisher": "M. Estiaque Ahmed Khan",
     "category": "Photography",
     "shortDescription": "Fast, premium image viewer and photo browser",
     "longDescription": "ENViewer is a fast, offline image viewer and photo browser with HEIC, RAW and Live Photo support.",
-    "copyright": "© 2026 Estiaque · MIT License",
+    "copyright": "© 2026 M. Estiaque Ahmed Khan · MIT License",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -372,6 +372,7 @@
       "webviewInstallMode": {
         "type": "downloadBootstrapper"
       }
-    }
+    },
+    "homepage": "https://mestiaque.com"
   }
 }
