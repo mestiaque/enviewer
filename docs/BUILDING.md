@@ -29,8 +29,8 @@ sudo apt install -y build-essential curl pkg-config file patchelf cmake \
   gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-libav   # video / Live Photo playback
 
 scripts/build-linux.sh
-# → target/release/bundle/deb/ENViewer_0.2.1_amd64.deb
-# → target/release/bundle/appimage/ENViewer_0.2.1_amd64.AppImage
+# → target/release/bundle/deb/ENViewer_0.2.2_amd64.deb
+# → target/release/bundle/appimage/ENViewer_0.2.2_amd64.AppImage
 ```
 
 The `.deb` declares its runtime dependencies (`libwebkit2gtk-4.1-0`,
@@ -65,7 +65,7 @@ testing. The host's cargo registry is mounted so crates download only once.
    pnpm install
    pnpm tauri build --bundles nsis --config src-tauri/tauri.windows.conf.json
    ```
-   * Installer: `target\release\bundle\nsis\ENViewer_0.2.1_x64-setup.exe`
+   * Installer: `target\release\bundle\nsis\ENViewer_0.2.2_x64-setup.exe`
      (per-user install, Start-menu shortcut, optional desktop shortcut, file
      associations, "Open with" entries).
    * Portable: copy `target\release\enviewer.exe` together with the DLLs from

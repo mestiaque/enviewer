@@ -150,11 +150,15 @@ mod tests {
 
     #[test]
     fn only_tokened_video_paths_are_served() {
-        assert_eq!(parse_target("/abc/media?p=%2Fhome%2Fu%2Fclip.MOV", "abc"), Some(PathBuf::from("/home/u/clip.MOV")));
-        assert_eq!(parse_target("/abc/media?p=%2Fhome%2Fu%2Fclip.mp4&v=3", "abc"), Some(PathBuf::from("/home/u/clip.mp4")));
-        assert_eq!(parse_target("/wrong/media?p=%2Fhome%2Fu%2Fclip.mp4", "abc"), None);
-        assert_eq!(parse_target("/abc/media?p=%2Fetc%2Fpasswd", "abc"), None);
-        assert_eq!(parse_target("/abc/media?p=%2Fhome%2Fu%2Fphoto.jpg", "abc"), None);
+        // An absolute path on this platform, percent-encoded the way the frontend sends it.
+        let root = if cfg!(windows) { r"C:\u\" } else { "/home/u/" };
+        let enc = |name: &str| percent_encoding::utf8_percent_encode(&format!("{root}{name}"), percent_encoding::NON_ALPHANUMERIC).to_string();
+        let abs = |name: &str| Some(PathBuf::from(format!("{root}{name}")));
+        assert_eq!(parse_target(&format!("/abc/media?p={}", enc("clip.MOV")), "abc"), abs("clip.MOV"));
+        assert_eq!(parse_target(&format!("/abc/media?p={}&v=3", enc("clip.mp4")), "abc"), abs("clip.mp4"));
+        assert_eq!(parse_target(&format!("/wrong/media?p={}", enc("clip.mp4")), "abc"), None);
+        assert_eq!(parse_target(&format!("/abc/media?p={}", enc("passwd")), "abc"), None);
+        assert_eq!(parse_target(&format!("/abc/media?p={}", enc("photo.jpg")), "abc"), None);
         assert_eq!(parse_target("/abc/media?p=relative.mp4", "abc"), None);
     }
 
