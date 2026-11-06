@@ -3,12 +3,18 @@
 # installed copies of ENViewer find it through their built-in update check.
 name: build
 
+# Full Windows + Linux bundling is slow (~30 min), so it runs for release tags, pull
+# requests and manual runs only — not for every push to main.
 on:
   push:
-    branches: [main]
     tags: ["v*"]
   pull_request:
   workflow_dispatch:
+
+# A newer run for the same tag/branch cancels the older one.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -34,10 +40,21 @@ jobs:
           sudo apt-get install -y pkg-config libwebkit2gtk-4.1-dev libgtk-3-dev librsvg2-dev \
             libayatana-appindicator3-dev libssl-dev libxdo-dev file patchelf libheif-dev
 
+      # vcpkg builds libheif from source (~11 min); cache the built package between runs.
+      - name: Cache vcpkg packages (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/vcpkg-cache
+          key: vcpkg-libheif-${{ runner.os }}-v1
+
       - name: libheif (vcpkg)
         if: runner.os == 'Windows'
         shell: pwsh
+        env:
+          VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/vcpkg-cache
         run: |
+          New-Item -ItemType Directory -Force -Path $env:VCPKG_DEFAULT_BINARY_CACHE | Out-Null
           vcpkg install libheif:x64-windows
           "LIBHEIF_DIR=$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows" | Out-File -FilePath $env:GITHUB_ENV -Append
 
@@ -61,7 +78,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm test
-      - run: cargo test --workspace
+      # --release: the bundle step below reuses these compiled crates instead of building twice.
+      - run: cargo test --release --workspace
 
       - name: Bundle
         run: pnpm tauri build --bundles ${{ matrix.bundles }} ${{ runner.os == 'Windows' && '--config src-tauri/tauri.windows.conf.json' || '' }}
