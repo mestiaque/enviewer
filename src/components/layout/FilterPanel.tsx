@@ -88,19 +88,6 @@ export function FilterPanel() {
             ]}
           />
         </label>
-        <label className="space-y-1">
-          <span className="text-[11px] text-faint">Videos</span>
-          <Select
-            className="w-full"
-            value={filter.videos}
-            onChange={(v) => setFilter({ videos: v })}
-            options={[
-              { value: "include", label: "Include" },
-              { value: "exclude", label: "Hide" },
-              { value: "only", label: "Only videos" },
-            ]}
-          />
-        </label>
       </div>
       <div>
         <div className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-faint">Date (captured, else modified)</div>

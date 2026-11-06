@@ -40,8 +40,8 @@ describe("library engine", () => {
   const visible = (search = "", filter = EMPTY_FILTER, key: Parameters<typeof computeVisible>[5] = "name", dir: "asc" | "desc" = "asc", favs = new Set<string>()) =>
     computeVisible(items, probes, search, filter, favs, key, dir).map((i) => i.name);
 
-  it("hides Live Photo companions and sorts naturally", () => {
-    expect(visible()).toEqual(["anim.gif", "clip.mp4", "dog.cr3", "IMG_2.jpg", "IMG_10.jpg", "pano.heic"]);
+  it("hides Live Photo companions and videos, sorts naturally", () => {
+    expect(visible()).toEqual(["anim.gif", "dog.cr3", "IMG_2.jpg", "IMG_10.jpg", "pano.heic"]);
   });
 
   it("sorts by size, dimensions and capture date", () => {
@@ -55,7 +55,8 @@ describe("library engine", () => {
     expect(visible("", { ...EMPTY_FILTER, live: true })).toEqual(["pano.heic"]);
     expect(visible("", { ...EMPTY_FILTER, animated: true })).toEqual(["anim.gif"]);
     expect(visible("", { ...EMPTY_FILTER, orientation: "portrait" })).toEqual(["IMG_2.jpg"]);
-    expect(visible("", { ...EMPTY_FILTER, videos: "only" })).toEqual(["clip.mp4"]);
+    // ENViewer never lists videos; the legacy videos filter is ignored.
+    expect(visible("", { ...EMPTY_FILTER, videos: "only" })).toEqual(visible());
     expect(visible("", { ...EMPTY_FILTER, minMegapixels: 12 })).toEqual(["IMG_2.jpg", "IMG_10.jpg", "pano.heic"]);
     expect(visible("", { ...EMPTY_FILTER, favorites: true }, "name", "asc", new Set(["/photos/trip/dog.cr3"]))).toEqual(["dog.cr3"]);
     expect(visible("", { ...EMPTY_FILTER, dateFrom: "2024-01-01", dateTo: "2024-12-31", videos: "exclude" })).toEqual(["anim.gif", "dog.cr3", "IMG_2.jpg", "pano.heic"]);

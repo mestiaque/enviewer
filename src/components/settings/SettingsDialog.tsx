@@ -323,7 +323,7 @@ export function SettingsDialog() {
                   </tr>
                 </thead>
                 <tbody>
-                  {formats.map((f) => (
+                  {formats.filter((f) => f.kind === "image").map((f) => (
                     <tr key={f.id} className="border-t border-line/60" title={f.notes}>
                       <td className="py-1.5 pr-2">{f.name}</td>
                       <td className="py-1.5 pr-2 font-mono text-[11px] text-muted">{f.extensions.join(" ")}</td>

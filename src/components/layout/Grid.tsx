@@ -178,7 +178,7 @@ export function Grid() {
                 : lib.view.kind === "collection"
                   ? "Right-click images and choose Add to collection."
                   : lib.view.kind === "folder"
-                    ? "This folder has no supported images or videos."
+                    ? "This folder has no supported images."
                     : undefined
             }
             action={lib.view.kind === "folder" && <Button onClick={openFolderDialog}>Open another folder</Button>}

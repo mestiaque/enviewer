@@ -152,6 +152,9 @@ pub fn scan_folder(
         return Err(crate::error::CoreError::Cancelled);
     }
     summary.live_photos = pair_live_photos(&mut items);
+    // ENViewer shows images only: a movie is kept solely as the motion part of a Live Photo
+    // (flagged `companion`, hidden by the UI); standalone videos are left out.
+    items.retain(|i| i.kind == MediaKind::Image || i.companion);
     items.sort_by(|a, b| natural_cmp(&a.name, &b.name));
     summary.total = items.len();
     for chunk in items.chunks(batch_size.max(1)) {
@@ -186,7 +189,8 @@ pub fn items_for_paths(paths: &[String]) -> Vec<MediaItem> {
     }
     pair_live_photos(&mut all);
     let wanted: std::collections::HashSet<&str> = paths.iter().map(|s| s.as_str()).collect();
-    let mut out: Vec<MediaItem> = all.into_iter().filter(|i| wanted.contains(i.path.as_str())).collect();
+    let mut out: Vec<MediaItem> =
+        all.into_iter().filter(|i| i.kind == MediaKind::Image && wanted.contains(i.path.as_str())).collect();
     // Preserve the caller's order.
     let order: HashMap<&str, usize> = paths.iter().enumerate().map(|(i, p)| (p.as_str(), i)).collect();
     out.sort_by_key(|i| order.get(i.path.as_str()).copied().unwrap_or(usize::MAX));
@@ -277,14 +281,15 @@ mod tests {
         let cancel = AtomicBool::new(false);
         let mut all = Vec::new();
         let s = scan_folder(d, false, 2, &cancel, |b| all.extend(b)).unwrap();
-        assert_eq!(s.total, 5);
+        // 2 stills + the Live Photo's motion file; standalone videos are not listed.
+        assert_eq!(s.total, 3);
         assert_eq!(s.live_photos, 1);
-        let get = |n: &str| all.iter().find(|i| i.name == n).unwrap();
-        assert!(get("IMG_0001.jpg").live.as_ref().is_some_and(|l| !l.verified && l.video.ends_with("IMG_0001.MOV")));
-        assert!(get("IMG_0001.MOV").companion);
-        assert!(get("IMG_0002.jpg").live.is_none());
-        assert!(!get("IMG_0002.MOV").companion);
-        assert!(!get("holiday.mov").companion);
+        let get = |n: &str| all.iter().find(|i| i.name == n);
+        assert!(get("IMG_0001.jpg").unwrap().live.as_ref().is_some_and(|l| !l.verified && l.video.ends_with("IMG_0001.MOV")));
+        assert!(get("IMG_0001.MOV").unwrap().companion);
+        assert!(get("IMG_0002.jpg").unwrap().live.is_none());
+        assert!(get("IMG_0002.MOV").is_none(), "a regular video next to a photo is not shown");
+        assert!(get("holiday.mov").is_none(), "standalone videos are not shown");
     }
 
     #[test]

@@ -3,7 +3,6 @@ import {
   Aperture,
   Clock,
   Download,
-  Film,
   Folder,
   FolderOpen,
   FolderPlus,
@@ -81,7 +80,6 @@ const smartAlbums: { id: string; label: string; icon: ReactNode; filter: Partial
   { id: "live", label: "Live Photos", icon: <Zap className="h-4 w-4" />, filter: { live: true } },
   { id: "raw", label: "RAW", icon: <Aperture className="h-4 w-4" />, filter: { raw: true } },
   { id: "animated", label: "Animated", icon: <Sparkles className="h-4 w-4" />, filter: { animated: true } },
-  { id: "videos", label: "Videos", icon: <Film className="h-4 w-4" />, filter: { videos: "only" } },
 ];
 
 export function Sidebar() {

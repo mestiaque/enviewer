@@ -95,10 +95,9 @@ export function displaySize(p?: Probe): { w: number; h: number } | null {
 }
 
 export function matches(it: MediaItem, p: Probe | undefined, q: SearchQuery, f: Filter, favorites: Set<string>): boolean {
-  if (it.companion) return false;
+  // Live Photo motion files are shown through their still; ENViewer never lists videos.
+  if (it.companion || it.kind === "video") return false;
   // Filter
-  if (f.videos === "exclude" && it.kind === "video") return false;
-  if (f.videos === "only" && it.kind !== "video") return false;
   if (f.formats.length && !f.formats.includes(it.format)) return false;
   if (f.favorites && !favorites.has(it.path)) return false;
   if (f.raw && !it.raw) return false;

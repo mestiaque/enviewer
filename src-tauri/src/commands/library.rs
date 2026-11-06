@@ -88,7 +88,8 @@ pub fn path_kind(path: String) -> PathKind {
         exists: p.exists(),
         is_dir: p.is_dir(),
         parent: p.parent().map(|d| d.to_string_lossy().into_owned()),
-        supported: formats::from_path(p).is_some(),
+        // ENViewer opens images only (videos are ENPlayer's job).
+        supported: formats::from_path(p).is_some_and(|f| f.kind == formats::MediaKind::Image),
     }
 }
 

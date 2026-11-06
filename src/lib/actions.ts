@@ -11,7 +11,7 @@ import type { MediaItem, OpResult } from "./types";
 const IMAGE_EXTS = () =>
   useLibrary
     .getState()
-    .formats.filter((f) => f.available)
+    .formats.filter((f) => f.available && f.kind === "image")
     .flatMap((f) => f.extensions);
 
 export async function openFolderDialog() {
@@ -20,7 +20,7 @@ export async function openFolderDialog() {
 }
 
 export async function openFileDialog() {
-  const file = await openDialog({ multiple: false, title: "Open image", filters: [{ name: "Images & videos", extensions: IMAGE_EXTS() }] });
+  const file = await openDialog({ multiple: false, title: "Open image", filters: [{ name: "Images", extensions: IMAGE_EXTS() }] });
   if (typeof file === "string") await openPath(file);
 }
 
@@ -29,7 +29,7 @@ export async function openPath(path: string) {
   const kind = await api.pathKind(path);
   if (!kind.exists) return toast({ kind: "error", title: "Not found", detail: path });
   if (kind.isDir) return useLibrary.getState().navigate({ kind: "folder", path });
-  if (!kind.supported) return toast({ kind: "error", title: "Unsupported file type", detail: basename(path) });
+  if (!kind.supported) return toast({ kind: "error", title: "ENViewer opens images only", detail: `${basename(path)} is not a supported image. Videos open in ENPlayer.` });
   const lib = useLibrary.getState();
   const folder = kind.parent ?? dirname(path);
   await lib.navigate({ kind: "folder", path: folder });
