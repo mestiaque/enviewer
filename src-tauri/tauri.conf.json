@@ -1,0 +1,377 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "ENViewer",
+  "mainBinaryName": "enviewer",
+  "version": "0.2.0",
+  "identifier": "app.lumen.viewer",
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "pnpm build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "ENViewer",
+        "width": 1320,
+        "height": 860,
+        "minWidth": 760,
+        "minHeight": 500,
+        "backgroundColor": "#141416",
+        "dragDropEnabled": true,
+        "center": true,
+        "decorations": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' lumen: http://lumen.localhost blob: data:; media-src 'self' lumen: http://lumen.localhost http://127.0.0.1:* blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' ipc: http://ipc.localhost lumen: http://lumen.localhost; font-src 'self' data:"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "publisher": "Estiaque",
+    "category": "Photography",
+    "shortDescription": "Fast, premium image viewer and photo browser",
+    "longDescription": "ENViewer is a fast, offline image viewer and photo browser with HEIC, RAW and Live Photo support.",
+    "copyright": "© 2026 Estiaque · MIT License",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "fileAssociations": [
+      {
+        "ext": [
+          "jpg",
+          "jpeg",
+          "jpe",
+          "jfif"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/jpeg"
+      },
+      {
+        "ext": [
+          "png"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/png"
+      },
+      {
+        "ext": [
+          "apng"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/apng"
+      },
+      {
+        "ext": [
+          "gif"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/gif"
+      },
+      {
+        "ext": [
+          "webp"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/webp"
+      },
+      {
+        "ext": [
+          "bmp",
+          "dib"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/bmp"
+      },
+      {
+        "ext": [
+          "ico"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/vnd.microsoft.icon"
+      },
+      {
+        "ext": [
+          "tif",
+          "tiff"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/tiff"
+      },
+      {
+        "ext": [
+          "svg"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/svg+xml"
+      },
+      {
+        "ext": [
+          "svgz"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/svg+xml-compressed"
+      },
+      {
+        "ext": [
+          "avif"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/avif"
+      },
+      {
+        "ext": [
+          "heic"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/heic"
+      },
+      {
+        "ext": [
+          "heif",
+          "hif"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/heif"
+      },
+      {
+        "ext": [
+          "jxl"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/jxl"
+      },
+      {
+        "ext": [
+          "psd"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/vnd.adobe.photoshop"
+      },
+      {
+        "ext": [
+          "hdr"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/vnd.radiance"
+      },
+      {
+        "ext": [
+          "exr"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/x-exr"
+      },
+      {
+        "ext": [
+          "tga"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/x-tga"
+      },
+      {
+        "ext": [
+          "qoi"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/qoi"
+      },
+      {
+        "ext": [
+          "pbm",
+          "pgm",
+          "ppm",
+          "pnm",
+          "pam"
+        ],
+        "name": "Image",
+        "description": "Image file",
+        "role": "Viewer",
+        "mimeType": "image/x-portable-anymap"
+      },
+      {
+        "ext": [
+          "dng"
+        ],
+        "name": "Camera RAW",
+        "description": "Camera RAW file",
+        "role": "Viewer",
+        "mimeType": "image/x-adobe-dng"
+      },
+      {
+        "ext": [
+          "cr2"
+        ],
+        "name": "Camera RAW",
+        "description": "Camera RAW file",
+        "role": "Viewer",
+        "mimeType": "image/x-canon-cr2"
+      },
+      {
+        "ext": [
+          "cr3"
+        ],
+        "name": "Camera RAW",
+        "description": "Camera RAW file",
+        "role": "Viewer",
+        "mimeType": "image/x-canon-cr3"
+      },
+      {
+        "ext": [
+          "crw"
+        ],
+        "name": "Camera RAW",
+        "description": "Camera RAW file",
+        "role": "Viewer",
+        "mimeType": "image/x-canon-crw"
+      },
+      {
+        "ext": [
+          "nef",
+          "nrw"
+        ],
+        "name": "Camera RAW",
+        "description": "Camera RAW file",
+        "role": "Viewer",
+        "mimeType": "image/x-nikon-nef"
+      },
+      {
+        "ext": [
+          "arw",
+          "srf",
+          "sr2"
+        ],
+        "name": "Camera RAW",
+        "description": "Camera RAW file",
+        "role": "Viewer",
+        "mimeType": "image/x-sony-arw"
+      },
+      {
+        "ext": [
+          "raf"
+        ],
+        "name": "Camera RAW",
+        "description": "Camera RAW file",
+        "role": "Viewer",
+        "mimeType": "image/x-fuji-raf"
+      },
+      {
+        "ext": [
+          "orf"
+        ],
+        "name": "Camera RAW",
+        "description": "Camera RAW file",
+        "role": "Viewer",
+        "mimeType": "image/x-olympus-orf"
+      },
+      {
+        "ext": [
+          "rw2"
+        ],
+        "name": "Camera RAW",
+        "description": "Camera RAW file",
+        "role": "Viewer",
+        "mimeType": "image/x-panasonic-rw2"
+      },
+      {
+        "ext": [
+          "pef"
+        ],
+        "name": "Camera RAW",
+        "description": "Camera RAW file",
+        "role": "Viewer",
+        "mimeType": "image/x-pentax-pef"
+      },
+      {
+        "ext": [
+          "srw"
+        ],
+        "name": "Camera RAW",
+        "description": "Camera RAW file",
+        "role": "Viewer",
+        "mimeType": "image/x-samsung-srw"
+      }
+    ],
+    "linux": {
+      "deb": {
+        "depends": [
+          "libheif1",
+          "gstreamer1.0-plugins-good",
+          "gstreamer1.0-libav"
+        ],
+        "section": "graphics",
+        "desktopTemplate": "enviewer.desktop",
+        "conflicts": [
+          "lumen"
+        ],
+        "replaces": [
+          "lumen"
+        ],
+        "provides": [
+          "lumen"
+        ]
+      },
+      "appimage": {
+        "bundleMediaFramework": true
+      },
+      "rpm": {
+        "desktopTemplate": "enviewer.desktop"
+      }
+    },
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser",
+        "displayLanguageSelector": false
+      },
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper"
+      }
+    }
+  }
+}

@@ -1,0 +1,107 @@
+# Tests and bundles ENViewer for Ubuntu (.deb, AppImage) and Windows (NSIS installer).
+# Pushing a tag like v0.2.1 publishes a GitHub Release with the installers attached;
+# installed copies of ENViewer find it through their built-in update check.
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test-and-bundle:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            bundles: deb,appimage
+          - os: windows-latest
+            bundles: nsis
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Linux system dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libwebkit2gtk-4.1-dev libgtk-3-dev librsvg2-dev \
+            libayatana-appindicator3-dev libssl-dev libxdo-dev file patchelf libheif-dev
+
+      - name: libheif (vcpkg)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          vcpkg install libheif:x64-windows
+          "LIBHEIF_DIR=$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: cargo test --workspace
+
+      - name: Copy libheif DLLs next to the executable (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path src-tauri/dlls | Out-Null
+          Copy-Item "$env:LIBHEIF_DIR\bin\*.dll" src-tauri/dlls/
+
+      - name: Bundle
+        run: pnpm tauri build --bundles ${{ matrix.bundles }} ${{ runner.os == 'Windows' && '--config src-tauri/tauri.windows.conf.json' || '' }}
+
+      - name: Portable executable (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path portable | Out-Null
+          Copy-Item target/release/enviewer.exe portable/ENViewer.exe
+          Copy-Item src-tauri/dlls/*.dll portable/
+          Compress-Archive -Path portable/* -DestinationPath ENViewer-portable-windows-x64.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: enviewer-${{ matrix.os }}
+          path: |
+            target/release/bundle/deb/*.deb
+            target/release/bundle/appimage/*.AppImage
+            target/release/bundle/nsis/*.exe
+            ENViewer-portable-windows-x64.zip
+
+  release:
+    name: Publish release
+    # Publish whatever built (Linux alone is enough), so one broken platform never blocks updates.
+    if: ${{ !cancelled() && startsWith(github.ref, 'refs/tags/v') }}
+    needs: [test-and-bundle]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
+      - name: Collect files
+        run: |
+          mkdir -p files
+          find out -type f \( -name '*.deb' -o -name '*.AppImage' -o -name '*-setup.exe' -o -name '*.zip' \) -exec cp {} files/ \;
+          ls -l files
+          test -n "$(ls files)"
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: files/*
+          generate_release_notes: true

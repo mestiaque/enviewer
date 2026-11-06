@@ -1,0 +1,36 @@
+[package]
+name = "lumen-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Platform-independent core of the Lumen image viewer: formats, decoding, metadata, thumbnails, Live Photos, database."
+
+[features]
+default = ["heif"]
+# HEIC/HEIF/AVIF decoding through the system libheif (LGPL-3.0, dynamically linked).
+heif = ["dep:pkg-config"]
+
+[dependencies]
+image = { version = "0.25", default-features = false, features = ["jpeg", "png", "gif", "webp", "bmp", "ico", "tiff", "hdr", "exr", "pnm", "tga", "qoi", "rayon"] }
+rawler = "0.8"
+jxl-oxide = { version = "0.12", features = ["image"] }
+psd = "0.3"
+resvg = "0.49"
+kamadak-exif = "0.6"
+rusqlite = { version = "0.37", features = ["bundled"] }
+blake3 = "1"
+imagesize = "0.14"
+trash = "5"
+thiserror = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rayon = "1"
+parking_lot = "0.12"
+log = "0.4"
+crossbeam-channel = "0.5"
+
+[build-dependencies]
+pkg-config = { version = "0.3", optional = true }
+
+[dev-dependencies]
+tempfile = "3"
