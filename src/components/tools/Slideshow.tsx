@@ -9,6 +9,9 @@ import { useViewer } from "../../store/viewer";
 import { sourcesFor } from "../viewer/ImageStage";
 import { IconButton, Select } from "../ui/primitives";
 
+/** Longest transition below, in milliseconds. */
+const TRANSITION_MS = 900;
+
 export function Slideshow() {
   const show = useUi((s) => s.slideshow);
   const { settings: s, set } = useSettings();
@@ -73,7 +76,11 @@ export function Slideshow() {
       keyRef.current += 1;
       const tr = settingsRef.current.animations ? settingsRef.current.slideshowTransition : "none";
       // "Random" picks a different effect for every slide (never the same twice in a row).
-      setLayers((l) => [...l.slice(-1), { key: keyRef.current, src: url, effect: tr === "random" ? randomEffect(l[l.length - 1]?.effect) : tr }]);
+      setLayers((l) => {
+        const effect = tr === "random" ? randomEffect(l[l.length - 1]?.effect) : tr;
+        const layer = { key: keyRef.current, src: url, effect };
+        return effect === "none" ? [layer] : [...l.slice(-1), layer];
+      });
     };
     img.onload = () => commit(src);
     img.onerror = () => {
@@ -91,6 +98,14 @@ export function Slideshow() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item?.path]);
+
+  // Drop the outgoing image after the transition, or it stays visible behind
+  // transparent images.
+  useEffect(() => {
+    if (layers.length < 2) return;
+    const t = window.setTimeout(() => setLayers((l) => l.slice(-1)), TRANSITION_MS);
+    return () => window.clearTimeout(t);
+  }, [layers]);
 
   useEffect(() => {
     if (!show || !playing) return;
@@ -139,9 +154,11 @@ export function Slideshow() {
         @keyframes ss-blur { from { opacity: 0; filter: blur(24px); transform: scale(1.02) } to { opacity: 1; filter: blur(0); transform: none } }
         .slideshow-slideUp { animation: ss-slide-up .7s cubic-bezier(.2,.8,.2,1) both }
         .slideshow-blur { animation: ss-blur .9s ease both }
+        @keyframes ss-out { from { opacity: 1 } to { opacity: 0 } }
+        .slideshow-out { animation: ss-out .7s ease both }
       `}</style>
       {layers.map((l, i) => (
-        <img key={l.key} src={l.src} alt="" className={cn("absolute inset-0 h-full w-full object-contain", i === layers.length - 1 && l.effect !== "none" && `slideshow-${l.effect}`)} draggable={false} />
+        <img key={l.key} src={l.src} alt="" className={cn("absolute inset-0 h-full w-full object-contain", i < layers.length - 1 ? "slideshow-out" : l.effect !== "none" && `slideshow-${l.effect}`)} draggable={false} />
       ))}
       <div
         className={cn(
