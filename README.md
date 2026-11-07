@@ -84,7 +84,7 @@ linked; rawler is LGPL-2.1.
 
 ## Updates
 
-Installed copies update themselves: ENViewer checks GitHub for a newer release every time it starts (Settings → General
+Installed copies update themselves: ENViewer checks GitHub for a newer release once a day (Settings → General
 → *Check for updates automatically*, or *Check now*). **Update now** downloads the installer, verifies its
 SHA-256 and installs it over the existing one, keeping your data. On Ubuntu the system asks for your
 password; on Windows the installer runs silently and ENViewer restarts. No uninstall is needed.

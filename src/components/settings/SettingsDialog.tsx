@@ -182,7 +182,7 @@ export function SettingsDialog() {
                   ]}
                 />
               </Field>
-              <Toggle k="checkUpdates" label="Check for updates automatically" hint="Looks for a new ENViewer release on GitHub at every start" />
+              <Toggle k="checkUpdates" label="Check for updates automatically" hint="Looks for a new ENViewer release on GitHub once a day" />
               <UpdateRow />
             </>
           )}
