@@ -2,8 +2,6 @@ import { create } from "zustand";
 import { api, errorMessage, type UpdateInfo } from "../lib/api";
 import { toast } from "./ui";
 
-const LAST_CHECK_KEY = "enviewer.lastUpdateCheck";
-const DAY = 20 * 3600 * 1000;
 
 interface UpdateStore {
   available: UpdateInfo | null;
@@ -15,14 +13,6 @@ interface UpdateStore {
   close(): void;
 }
 
-function lastCheck(): number {
-  try {
-    return Number(localStorage.getItem(LAST_CHECK_KEY) ?? 0);
-  } catch {
-    return 0;
-  }
-}
-
 export const useUpdate = create<UpdateStore>((set, get) => ({
   available: null,
   dialogOpen: false,
@@ -32,11 +22,6 @@ export const useUpdate = create<UpdateStore>((set, get) => ({
     set({ checking: true });
     try {
       const info = await api.checkUpdate();
-      try {
-        localStorage.setItem(LAST_CHECK_KEY, String(Date.now()));
-      } catch {
-        /* storage unavailable: just check again next start */
-      }
       set({ available: info });
       if (!info) return "You have the latest version";
       if (manual) set({ dialogOpen: true });
@@ -54,9 +39,9 @@ export const useUpdate = create<UpdateStore>((set, get) => ({
   close: () => set({ dialogOpen: false }),
 }));
 
-/** Quiet check a few seconds after start-up, at most about once a day. */
+/** Quiet check a few seconds after every start. */
 export function scheduleUpdateCheck(enabled: boolean) {
-  if (!enabled || Date.now() - lastCheck() < DAY) return () => {};
+  if (!enabled) return () => {};
   const t = window.setTimeout(() => void useUpdate.getState().check(false), 8000);
   return () => window.clearTimeout(t);
 }
