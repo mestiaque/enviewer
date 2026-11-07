@@ -14,6 +14,8 @@
 
 ## Browsing
 
+![Photo grid](screenshots/01-grid.png)
+
 * **Thumbnail size**: S / M / L in the toolbar. The layout button switches
   between a square grid and a *justified* layout that keeps every photo's aspect ratio.
 * **Select**: click, `Ctrl+click` to toggle, `Shift+click` for a range, `Ctrl+A`
@@ -23,12 +25,14 @@
 * **Sort** by name, capture date (EXIF), created or modified date, size,
   dimensions or type.
 * **Filter** by favourites, Live Photos, RAW, animated, format, orientation,
-  minimum resolution, videos and date range. The **Albums** in the sidebar
+  minimum resolution and date range. The **Albums** in the sidebar
   are one-click filters for the current folder.
 * **Search** (`Ctrl+F`) matches file names and folders. Tokens: `ext:heic`,
   `folder:holiday`, `date:2024-07`, `w>4000`, `h<=1080`.
 
 ## The viewer
+
+![Photo viewer](screenshots/02-viewer.png)
 
 | Action | Mouse | Keyboard |
 |--------|-------|----------|
@@ -52,16 +56,20 @@ one image pixel per screen pixel, even on high-DPI displays.
 Rotating and flipping in the viewer only change the *view*. Nothing is written to
 the file.
 
+![Viewer with the Info panel](screenshots/03-info-panel.png)
+
 ## Live Photos
 
 When an iPhone photo (`IMG_1234.HEIC` or `.JPG`) sits next to its motion file
 (`IMG_1234.MOV`), ENViewer shows them as one Live Photo. If both files carry
 Apple's content identifier, they must match (*verified*). Otherwise ENViewer only
 pairs short clips (≤ 6 s) and says "matched by file name" in the Info panel.
-Longer videos with the same name are always shown as normal videos.
+Longer videos with the same name are not listed. Open those in ENPlayer.
 Copying, moving, renaming or deleting a Live Photo includes its motion file.
 
 ## Editing (non-destructive)
+
+![Edit panel](screenshots/04-editor.png)
 
 Press `E` in the viewer. Crop, rotate, flip, exposure, brightness, contrast,
 saturation, temperature and sharpness preview instantly. **Save edits**
@@ -84,6 +92,10 @@ export target.
   images (perceptual hash, computed locally), broken files, largest and oldest
   images, and storage by format.
 
+![Compare two photos](screenshots/05-compare.png)
+
+![Organize & clean up](screenshots/06-organize.png)
+
 ## Files
 
 Right-click any image for: open with the default app, show in file manager, copy
@@ -94,6 +106,13 @@ instead.
 
 ## Privacy
 
+![Settings](screenshots/07-settings.png)
+
 ENViewer works offline and never uploads anything. **Settings → Privacy** can turn
 off history, clear it, and hide GPS coordinates in the Info panel. Thumbnails
 are cached on disk (limit and *Clear cache* in **Settings → Performance**).
+
+## Always on top
+
+Click the pin icon next to the window buttons, or go to **Settings → General → Always on top**, to
+keep ENViewer above other windows. On Ubuntu with Wayland, restart ENViewer once after turning it on.

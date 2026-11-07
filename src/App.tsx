@@ -1,7 +1,8 @@
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { listen } from "@tauri-apps/api/event";
 import { getCurrentWebview } from "@tauri-apps/api/webview";
-import { useEffect, useState } from "react";
+import { getCurrentWindow } from "@tauri-apps/api/window";
+import { useEffect, useRef, useState } from "react";
 import { BatchDialog } from "./components/tools/BatchDialog";
 import { Compare } from "./components/tools/Compare";
 import { OrganizeDialog } from "./components/tools/OrganizeDialog";
@@ -23,7 +24,7 @@ import { dirname } from "./lib/format";
 import { setMediaBase } from "./lib/urls";
 import { useLibrary, visibleSnapshot } from "./store/library";
 import { useSettings } from "./store/settings";
-import { useUi } from "./store/ui";
+import { toast, useUi } from "./store/ui";
 import { useViewer } from "./store/viewer";
 
 function hexToRgb(hex: string): string {
@@ -129,10 +130,30 @@ function useLibraryKeys() {
   }, []);
 }
 
+/** Keeps the window's always-on-top state in step with the setting. */
+function useAlwaysOnTop() {
+  const on = useSettings((s) => s.settings.alwaysOnTop);
+  const loaded = useSettings((s) => s.loaded);
+  const applied = useRef<boolean | null>(null);
+  useEffect(() => {
+    if (!loaded) return;
+    const changed = applied.current !== null && applied.current !== on;
+    applied.current = on;
+    getCurrentWindow().setAlwaysOnTop(on).catch((e) => console.error("always on top failed", e));
+    api
+      .prepareAlwaysOnTop(on)
+      .then((restart) => {
+        if (restart && changed) toast({ kind: "info", title: "Restart ENViewer to turn on Always on top" });
+      })
+      .catch((e) => console.error("always on top failed", e));
+  }, [on, loaded]);
+}
+
 export default function App() {
   const [ready, setReady] = useState(false);
   const view = useLibrary((s) => s.view);
   useTheme();
+  useAlwaysOnTop();
   useLibraryKeys();
 
   useEffect(() => {

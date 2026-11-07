@@ -17,6 +17,7 @@ export interface Settings {
   showFilenames: boolean;
   animations: boolean;
   sidebarCollapsed: boolean;
+  alwaysOnTop: boolean;
   // Viewer
   defaultZoom: "fit" | "fitLarge" | "actual";
   zoomSpeed: number;
@@ -64,6 +65,7 @@ export const DEFAULT_SETTINGS: Settings = {
   showFilenames: true,
   animations: true,
   sidebarCollapsed: false,
+  alwaysOnTop: false,
   defaultZoom: "fitLarge",
   zoomSpeed: 0.2,
   smoothZoom: true,

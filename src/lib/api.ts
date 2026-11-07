@@ -56,6 +56,7 @@ export const api = {
   },
   cancelScan: () => invoke<void>("cancel_scan"),
   mediaBaseUrl: () => invoke<string | null>("media_base_url"),
+  prepareAlwaysOnTop: (on: boolean) => invoke<boolean>("prepare_always_on_top", { on }),
   appPaths: () => invoke<{ data: string; cache: string; logs: string }>("app_paths"),
   setThumbGeneration: (generation: number) => invoke<void>("set_thumb_generation", { generation }),
   getImageInfo: (path: string) => invoke<ImageInfo>("get_image_info", { path }),

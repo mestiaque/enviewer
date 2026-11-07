@@ -169,6 +169,7 @@ export function SettingsDialog() {
               </Field>
               <Toggle k="rememberLastFolder" label="Remember last folder" />
               <Toggle k="showHidden" label="Show hidden files and folders" />
+              <Toggle k="alwaysOnTop" label="Always on top" hint="Keep ENViewer above other windows" />
               <Toggle k="confirmTrash" label="Confirm before moving to Trash" hint="Files always go to the system Trash, never deleted permanently" />
               <Field label="Default viewer zoom">
                 <Select

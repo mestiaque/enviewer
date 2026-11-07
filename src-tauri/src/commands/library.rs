@@ -245,6 +245,29 @@ pub struct AppPaths {
     pub logs: String,
 }
 
+/// Wayland cannot keep a window on top, so while the option is on the next start
+/// uses XWayland. Returns true when a restart is needed for that to take effect.
+#[tauri::command]
+pub fn prepare_always_on_top(app: AppHandle, on: bool) -> bool {
+    #[cfg(target_os = "linux")]
+    {
+        let Ok(dir) = app.path().app_data_dir() else { return false };
+        let marker = dir.join(crate::XWAYLAND_MARKER);
+        let saved = if on { std::fs::create_dir_all(&dir).and_then(|_| std::fs::write(&marker, "")) } else { std::fs::remove_file(&marker) };
+        if let Err(e) = saved {
+            if e.kind() != std::io::ErrorKind::NotFound {
+                log::warn!("could not update {}: {e}", marker.display());
+            }
+        }
+        on && std::env::var_os("WAYLAND_DISPLAY").is_some() && std::env::var("GDK_BACKEND").as_deref() != Ok("x11")
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        let _ = (app, on);
+        false
+    }
+}
+
 /// Where Lumen keeps its database, thumbnail cache and logs (shown in About).
 #[tauri::command]
 pub fn app_paths(app: AppHandle) -> AppPaths {

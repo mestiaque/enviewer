@@ -1,13 +1,15 @@
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { Copy, Minus, Square, X } from "lucide-react";
+import { Copy, Minus, Pin, Square, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "../../lib/format";
+import { useSettings } from "../../store/settings";
 
 const win = () => getCurrentWindow();
 
 /** Minimise / maximise / close for ENViewer's frameless window. */
 export function WindowControls({ dark = false }: { dark?: boolean }) {
   const [maximized, setMaximized] = useState(false);
+  const onTop = useSettings((s) => s.settings.alwaysOnTop);
   useEffect(() => {
     win().isMaximized().then(setMaximized, () => {});
     const un = win().onResized(() => win().isMaximized().then(setMaximized, () => {}));
@@ -21,6 +23,15 @@ export function WindowControls({ dark = false }: { dark?: boolean }) {
   );
   return (
     <div className="ml-1 flex items-center gap-2 pl-1" onMouseDown={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
+      <button
+        className={cn(btn, onTop && "!bg-accent !text-white")}
+        aria-label="Always on top"
+        aria-pressed={onTop}
+        title="Always on top"
+        onClick={() => useSettings.getState().set("alwaysOnTop", !onTop)}
+      >
+        <Pin className="h-3 w-3" />
+      </button>
       <button className={btn} aria-label="Minimize" title="Minimize" onClick={() => win().minimize()}>
         <Minus className="h-3.5 w-3.5" />
       </button>

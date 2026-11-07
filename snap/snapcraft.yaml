@@ -1,0 +1,45 @@
+# Packs the .deb built by `pnpm tauri build`. Copy it to snap/local/enviewer.deb first.
+name: enviewer
+title: ENViewer
+summary: Fast, premium image viewer and photo browser
+description: |
+  ENViewer is a fast, offline image viewer and photo browser with HEIC, RAW and
+  Live Photo support. It never uploads anything and never changes your originals.
+adopt-info: enviewer
+icon: src-tauri/icons/icon.png
+base: core22
+grade: stable
+confinement: strict
+license: MIT
+website: https://mestiaque.com
+source-code: https://github.com/mestiaque/enviewer
+
+apps:
+  enviewer:
+    command: usr/bin/enviewer
+    desktop: usr/share/applications/ENViewer.desktop
+    extensions: [gnome]
+    plugs:
+      - home
+      - removable-media
+      - network
+      - opengl
+      - audio-playback
+
+parts:
+  enviewer:
+    plugin: dump
+    source: snap/local/enviewer.deb
+    source-type: deb
+    stage-packages:
+      - libwebkit2gtk-4.1-0
+      - libheif1
+      - gstreamer1.0-plugins-good
+      - gstreamer1.0-libav
+    override-pull: |
+      craftctl default
+      craftctl set version="$(sed -n 's/^version = "\(.*\)"/\1/p' "$CRAFT_PROJECT_DIR/Cargo.toml" | head -1)"
+    override-prime: |
+      craftctl default
+      sed -i 's/^Icon=.*/Icon=${SNAP}\/usr\/share\/icons\/hicolor\/128x128\/apps\/enviewer.png/' \
+        usr/share/applications/ENViewer.desktop

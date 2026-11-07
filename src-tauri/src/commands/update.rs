@@ -116,6 +116,10 @@ fn user_agent(app: &AppHandle) -> String {
 
 #[tauri::command]
 pub async fn check_update(app: AppHandle) -> Result<Option<UpdateInfo>, String> {
+    // The Snap Store updates this copy.
+    if std::env::var_os("SNAP").is_some() {
+        return Ok(None);
+    }
     let current = app.package_info().version.to_string();
     let ua = user_agent(&app);
     tauri::async_runtime::spawn_blocking(move || {

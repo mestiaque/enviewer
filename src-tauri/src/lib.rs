@@ -7,6 +7,22 @@ use commands::{data, files, library, tools, update};
 use state::AppState;
 use tauri::{Emitter, Manager};
 
+/// In the app data folder while Always on top needs XWayland.
+pub(crate) const XWAYLAND_MARKER: &str = "use-xwayland";
+
+/// Picks XWayland before GTK starts when the marker exists. The path cannot come from
+/// Tauri here because it has to be set before Tauri initialises GTK.
+#[cfg(target_os = "linux")]
+fn prepare_display_backend() {
+    let base = std::env::var_os("XDG_DATA_HOME")
+        .map(std::path::PathBuf::from)
+        .or_else(|| std::env::var_os("HOME").map(|h| std::path::Path::new(&h).join(".local/share")));
+    let wanted = base.is_some_and(|b| b.join("app.lumen.viewer").join(XWAYLAND_MARKER).exists());
+    if wanted && std::env::var_os("GDK_BACKEND").is_none() {
+        std::env::set_var("GDK_BACKEND", "x11");
+    }
+}
+
 /// Files/folders passed on the command line (file associations, "Open with").
 fn launch_args(args: &[String]) -> Vec<String> {
     args.iter()
@@ -19,6 +35,9 @@ fn launch_args(args: &[String]) -> Vec<String> {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    #[cfg(target_os = "linux")]
+    prepare_display_backend();
+
     tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
             let paths = launch_args(&argv);
@@ -73,6 +92,7 @@ pub fn run() {
             library::frontend_log,
             library::media_base_url,
             library::app_paths,
+            library::prepare_always_on_top,
             data::get_favorites,
             data::set_favorite,
             data::list_collections,

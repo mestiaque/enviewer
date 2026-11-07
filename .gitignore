@@ -7,3 +7,5 @@ src-tauri/gen/
 release/
 masterprompt.md
 .vscode/
+*.snap
+snap/local/
