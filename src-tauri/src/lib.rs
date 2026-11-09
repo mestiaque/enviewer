@@ -121,7 +121,6 @@ pub fn run() {
             update::check_update,
             update::install_update,
             update::restart_app,
-            update::open_release_page,
             files::open_external,
             files::copy_text,
             files::copy_image,

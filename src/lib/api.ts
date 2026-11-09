@@ -90,7 +90,6 @@ export const api = {
   checkUpdate: () => invoke<UpdateInfo | null>("check_update"),
   installUpdate: (info: UpdateInfo) => invoke<"restart" | "exiting">("install_update", { info }),
   restartApp: () => invoke<void>("restart_app"),
-  openUrlReleasePage: () => invoke<void>("open_release_page"),
   openExternal: (path: string) => invoke<void>("open_external", { path }),
   copyText: (text: string) => invoke<void>("copy_text", { text }),
   copyImage: (path: string) => invoke<void>("copy_image", { path }),

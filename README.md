@@ -28,6 +28,92 @@ favourites, collections and settings. Its sister app is **ENPlayer**, the video 
 * **Safe**: originals are never modified, nothing is overwritten, deletion
   goes to the system Trash, and nothing is uploaded.
 
+## Install and uninstall
+
+ENViewer is published as GitHub releases. The commands below always fetch the **latest** version, so
+they work on any computer with an internet connection. Installed copies then update themselves
+(Settings → General → *Check for updates*).
+
+### Ubuntu / Debian (22.04 or newer), .deb (recommended)
+
+Open a terminal (**Ctrl+Alt+T**) and paste:
+
+```bash
+sudo apt update && sudo apt install -y curl
+URL=$(curl -fsSL https://api.github.com/repos/mestiaque/enviewer/releases/latest | grep -o 'https://[^"]*_amd64\.deb' | head -1)
+curl -fL -o /tmp/enviewer.deb "$URL"
+sudo apt install -y /tmp/enviewer.deb
+```
+
+`apt` also installs what ENViewer needs. Start it from the app grid (search “ENViewer”) or run `enviewer`.
+Enter your login password when asked (nothing is shown while you type; that is normal).
+Running the same commands again later upgrades to the newest version.
+
+### Any Linux, AppImage (no installation)
+
+```bash
+mkdir -p ~/Applications
+URL=$(curl -fsSL https://api.github.com/repos/mestiaque/enviewer/releases/latest | grep -o 'https://[^"]*_amd64\.AppImage' | head -1)
+curl -fL -o ~/Applications/ENViewer.AppImage "$URL"
+chmod +x ~/Applications/ENViewer.AppImage
+~/Applications/ENViewer.AppImage
+```
+
+### Windows 10 / 11, installer
+
+Open **PowerShell** (Start → type “PowerShell”) and paste:
+
+```powershell
+$r = Invoke-RestMethod https://api.github.com/repos/mestiaque/enviewer/releases/latest
+$a = $r.assets | Where-Object name -like '*-setup.exe' | Select-Object -First 1
+Invoke-WebRequest $a.browser_download_url -OutFile "$env:TEMP\$($a.name)"
+Start-Process "$env:TEMP\$($a.name)" -ArgumentList '/S' -Wait
+```
+
+No administrator rights are needed. ENViewer appears in the Start menu.
+
+### Windows, portable (no installation)
+
+```powershell
+$r = Invoke-RestMethod https://api.github.com/repos/mestiaque/enviewer/releases/latest
+$a = $r.assets | Where-Object name -eq 'ENViewer-portable-windows-x64.zip'
+Invoke-WebRequest $a.browser_download_url -OutFile "$env:TEMP\ENViewer-portable-windows-x64.zip"
+Expand-Archive "$env:TEMP\ENViewer-portable-windows-x64.zip" -DestinationPath "$HOME\ENViewer" -Force
+& "$HOME\ENViewer\ENViewer.exe"
+```
+
+Everything stays in that folder (copy it to a USB stick if you like). It updates itself too.
+
+### Uninstall
+
+**Ubuntu / Debian:**
+
+```bash
+sudo apt remove -y en-viewer
+```
+
+**AppImage:** delete the file: `rm ~/Applications/ENViewer.AppImage`
+
+**Windows (installer):** Settings → Apps → ENViewer → Uninstall, or in PowerShell:
+
+```powershell
+$u = Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*','HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*' -ErrorAction SilentlyContinue |
+  Where-Object DisplayName -like 'ENViewer*' | Select-Object -First 1
+Start-Process $u.UninstallString.Trim('"') -ArgumentList '/S' -Wait
+```
+
+**Windows (portable):** delete the folder: `Remove-Item -Recurse -Force "$HOME\ENViewer"`
+
+**Also remove settings and data** (optional). Your photos are never touched; only ENViewer's favourites, collections, settings and thumbnail cache are removed.
+
+```bash
+rm -rf ~/.local/share/app.lumen.viewer ~/.cache/app.lumen.viewer ~/.config/app.lumen.viewer                     # Linux
+```
+
+```powershell
+Remove-Item -Recurse -Force "$env:APPDATA\app.lumen.viewer","$env:LOCALAPPDATA\app.lumen.viewer" -ErrorAction SilentlyContinue   # Windows
+```
+
 ## Quick start (development)
 
 ```bash
