@@ -139,7 +139,13 @@ function useAlwaysOnTop() {
     if (!loaded) return;
     const changed = applied.current !== null && applied.current !== on;
     applied.current = on;
-    getCurrentWindow().setAlwaysOnTop(on).catch((e) => console.error("always on top failed", e));
+    const win = getCurrentWindow();
+    win
+      .setAlwaysOnTop(on)
+      // Some window managers send the window behind others when this changes,
+      // so bring it back to the front after a toggle.
+      .then(() => (changed ? win.setFocus() : undefined))
+      .catch((e) => console.error("always on top failed", e));
     api
       .prepareAlwaysOnTop(on)
       .then((restart) => {
