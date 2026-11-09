@@ -2922,7 +2922,7 @@ dependencies = [
 
 [[package]]
 name = "lumen"
-version = "0.2.8"
+version = "0.2.9"
 dependencies = [
  "log",
  "lumen-core",
@@ -2945,7 +2945,7 @@ dependencies = [
 
 [[package]]
 name = "lumen-core"
-version = "0.2.8"
+version = "0.2.9"
 dependencies = [
  "blake3",
  "crossbeam-channel",
