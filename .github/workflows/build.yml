@@ -4,7 +4,7 @@
 name: build
 
 # Full Windows + Linux bundling is slow (~30 min), so it runs for release tags, pull
-# requests and manual runs only — not for every push to main.
+# requests and manual runs only — not for every push to master.
 on:
   push:
     tags: ["v*"]
