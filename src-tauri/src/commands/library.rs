@@ -275,3 +275,27 @@ pub fn app_paths(app: AppHandle) -> AppPaths {
     let s = |r: tauri::Result<PathBuf>| r.map(|d| d.to_string_lossy().into_owned()).unwrap_or_default();
     AppPaths { data: s(p.app_data_dir()), cache: s(p.app_cache_dir()), logs: s(p.app_log_dir()) }
 }
+
+/// Build and runtime facts for Settings → About and bug reports.
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AboutInfo {
+    /// "debug" | "release"
+    pub build: String,
+    pub tauri_version: String,
+    /// WebKitGTK on Linux, WebView2 on Windows; empty when it cannot be read.
+    pub webview_version: String,
+    pub platform: String,
+    pub arch: String,
+}
+
+#[tauri::command]
+pub fn about_info() -> AboutInfo {
+    AboutInfo {
+        build: if cfg!(debug_assertions) { "debug" } else { "release" }.into(),
+        tauri_version: tauri::VERSION.into(),
+        webview_version: tauri::webview_version().unwrap_or_default(),
+        platform: std::env::consts::OS.into(),
+        arch: std::env::consts::ARCH.into(),
+    }
+}

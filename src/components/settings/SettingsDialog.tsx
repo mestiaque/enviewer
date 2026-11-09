@@ -10,8 +10,8 @@ import { useSettings, type Settings } from "../../store/settings";
 import { confirmDialog, toast, useUi } from "../../store/ui";
 import { Dialog } from "../ui/overlays";
 import { Button, Select, Slider, Switch } from "../ui/primitives";
-import appIcon from "../../assets/enviewer-icon.svg";
 import { useUpdate } from "../../store/update";
+import { AboutSection } from "./AboutSection";
 
 const SECTIONS = [
   ["general", "General"],
@@ -118,14 +118,10 @@ export function SettingsDialog() {
   const { settings: s, set } = useSettings();
   const { formats, heifVersion } = useLibrary();
   const [stats, setStats] = useState<CacheStats | null>(null);
-  const [version, setVersion] = useState("");
-  const [paths, setPaths] = useState<{ data: string; cache: string; logs: string } | null>(null);
 
   useEffect(() => {
     if (!open) return;
     api.cacheStats().then(setStats, () => {});
-    getVersion().then(setVersion, () => {});
-    api.appPaths().then(setPaths, () => {});
   }, [open, section]);
 
   return (
@@ -365,58 +361,7 @@ export function SettingsDialog() {
             </>
           )}
 
-          {section === "about" && (
-            <div className="space-y-2 py-3 text-[13px]">
-              <div className="flex items-center gap-3.5 pb-2">
-                <img src={appIcon} alt="" className="h-16 w-16" draggable={false} />
-                <div>
-                  <div className="text-lg font-semibold">ENViewer {version}</div>
-                  <div className="text-muted">A fast, offline image viewer and photo browser.</div>
-                </div>
-              </div>
-              <div className="pt-2 text-[12px] text-faint">HEIF decoder: {heifVersion ? `libheif ${heifVersion} (LGPL-3.0, dynamically linked)` : "not built in"}</div>
-              <div className="text-[12px] text-faint">RAW decoding: rawler (LGPL-2.1) · JPEG XL: jxl-oxide · SVG: resvg</div>
-              <div className="text-[12px] text-faint">Settings and library data: {paths?.data}</div>
-              <div className="text-[12px] text-faint">Thumbnail cache: {stats?.dir}</div>
-              <div className="text-[12px] text-faint">Logs: {paths?.logs}</div>
-              <div className="pt-4 text-[11px] font-semibold uppercase tracking-wider text-faint">Developer</div>
-              <div className="divide-y divide-line rounded-lg bg-raised px-3">
-                <div className="flex items-center justify-between py-2.5">
-                  <span>Developed by</span>
-                  <span className="text-muted">M. Estiaque Ahmed Khan</span>
-                </div>
-                <div className="flex items-center justify-between py-2.5">
-                  <span>
-                    Contact
-                    <span className="block text-[11px] text-faint">Bug reports, ideas and feedback are welcome</span>
-                  </span>
-                  <button
-                    className="text-accent hover:underline"
-                    onClick={() => api.contactDeveloper().catch(() => toast({ kind: "error", title: "No mail app found", detail: "info@mestiaque.com" }))}
-                  >
-                    info@mestiaque.com
-                  </button>
-                </div>
-                <div className="flex items-center justify-between py-2.5">
-                  <span>Website</span>
-                  <button className="text-accent hover:underline" onClick={() => void api.openDeveloperWebsite().catch(() => {})}>
-                    mestiaque.com
-                  </button>
-                </div>
-                <div className="flex items-center justify-between py-2.5">
-                  <span>
-                    Also by the developer
-                    <span className="block text-[11px] text-faint">The matching video and music player</span>
-                  </span>
-                  <span className="text-muted">ENPlayer</span>
-                </div>
-                <div className="flex items-center justify-between py-2.5">
-                  <span>Copyright</span>
-                  <span className="text-muted">© 2026 M. Estiaque Ahmed Khan · MIT</span>
-                </div>
-              </div>
-            </div>
-          )}
+          {section === "about" && <AboutSection />}
         </div>
       </div>
     </Dialog>

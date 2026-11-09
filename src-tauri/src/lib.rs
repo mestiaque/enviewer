@@ -80,6 +80,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             library::get_formats,
+            library::about_info,
             library::get_launch_paths,
             library::standard_folders,
             library::path_kind,

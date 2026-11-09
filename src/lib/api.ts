@@ -58,6 +58,7 @@ export const api = {
   mediaBaseUrl: () => invoke<string | null>("media_base_url"),
   prepareAlwaysOnTop: (on: boolean) => invoke<boolean>("prepare_always_on_top", { on }),
   appPaths: () => invoke<{ data: string; cache: string; logs: string }>("app_paths"),
+  aboutInfo: () => invoke<{ build: string; tauriVersion: string; webviewVersion: string; platform: string; arch: string }>("about_info"),
   setThumbGeneration: (generation: number) => invoke<void>("set_thumb_generation", { generation }),
   getImageInfo: (path: string) => invoke<ImageInfo>("get_image_info", { path }),
 
