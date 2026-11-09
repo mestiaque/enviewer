@@ -140,7 +140,7 @@ export function AboutSection() {
           </button>
         </Row>
         <Row label="Also by the developer" hint="Same look and themes">
-          <span className="text-muted">ENPlayer · ENDownloader · ENPost</span>
+          <span className="text-muted">ENPlayer · ENSave · ENPost</span>
         </Row>
         <Row label="Licence">
           <span className="text-muted">© 2026 M. Estiaque Ahmed Khan · MIT</span>
