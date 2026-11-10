@@ -9,3 +9,6 @@ masterprompt.md
 .vscode/
 *.snap
 snap/local/
+
+# Locally built libheif (scripts/libheif/build-linux.sh)
+/vendor/
