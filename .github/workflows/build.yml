@@ -88,6 +88,42 @@ jobs:
           New-Item -ItemType Directory -Force -Path src-tauri/dlls | Out-Null
           Copy-Item "$env:LIBHEIF_DIR\bin\*.dll" src-tauri/dlls/
 
+      # vcpkg's libheif DLLs need the Visual C++ runtime (VCRUNTIME140.dll, MSVCP140.dll), which a
+      # fresh Windows does not have ("VCRUNTIME140.dll was not found"). ENViewer.exe links it
+      # statically (tauri-build), so ship Microsoft's redistributable DLLs next to the exe
+      # (app-local deployment): installer and portable zip both work without vc_redist.
+      - name: Visual C++ runtime DLLs (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $vs = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          $crt = Get-ChildItem "$vs\VC\Redist\MSVC\*\x64\Microsoft.VC14*.CRT" -Directory | Sort-Object FullName -Descending | Select-Object -First 1
+          if (-not $crt) { throw "Visual C++ redistributable folder not found under $vs" }
+          Write-Host "Visual C++ runtime from $($crt.FullName)"
+          Copy-Item "$($crt.FullName)\*.dll" src-tauri/dlls/
+          foreach ($dll in "vcruntime140.dll", "vcruntime140_1.dll", "msvcp140.dll") {
+            if (-not (Test-Path "src-tauri/dlls/$dll")) { throw "$dll missing" }
+          }
+          # Every DLL the bundled libraries import must be in Windows itself or in dlls/.
+          $dumpbin = Get-ChildItem "$vs\VC\Tools\MSVC\*\bin\Hostx64\x64\dumpbin.exe" | Select-Object -First 1
+          $bundled = (Get-ChildItem src-tauri/dlls/*.dll).Name.ToLower()
+          $missing = @()
+          foreach ($f in Get-ChildItem src-tauri/dlls/*.dll) {
+            $deps = & $dumpbin.FullName /nologo /dependents $f.FullName | Where-Object { $_ -match '^\s+\S+\.dll\s*$' } | ForEach-Object { $_.Trim().ToLower() }
+            foreach ($d in $deps) {
+              if ($bundled -contains $d) { continue }
+              if ($d -like 'api-ms-*' -or $d -like 'ext-ms-*') { continue }
+              if (Test-Path "$env:SystemRoot\System32\$d") {
+                # Present on this build machine but not part of Windows: must be bundled.
+                if ($d -match '^(vcruntime|msvcp|concrt|vcomp|ucrtbased)') { $missing += "$($f.Name) -> $d" }
+                continue
+              }
+              $missing += "$($f.Name) -> $d"
+            }
+          }
+          if ($missing) { throw "Bundled DLLs import libraries that are not shipped:`n$($missing -join "`n")" }
+          Get-ChildItem src-tauri/dlls | Format-Table Name, Length
+
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm test
