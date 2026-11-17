@@ -12,16 +12,12 @@ import {
   Grid2x2,
   Keyboard,
   LayoutDashboard,
-  Monitor,
-  Moon,
   MoreHorizontal,
   PanelLeft,
   Play,
   RefreshCw,
   Search,
   Settings,
-  Sparkles,
-  Sun,
   Wand2,
   X,
 } from "lucide-react";
@@ -100,8 +96,6 @@ export function Toolbar() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
-
-  const themeIcon = settings.theme === "light" ? <Sun className="h-4 w-4" /> : settings.theme === "dark" ? <Moon className="h-4 w-4" /> : settings.theme === "glass" ? <Sparkles className="h-4 w-4" /> : <Monitor className="h-4 w-4" />;
 
   return (
     <header className="flex h-12 shrink-0 items-center gap-1 border-b border-line bg-panel/80 px-2 backdrop-blur" {...windowDragProps}>
@@ -198,15 +192,6 @@ export function Toolbar() {
       <IconButton label="Open file" shortcut="Ctrl+Shift+O" onClick={openFileDialog}>
         <FileImage className="h-4 w-4" />
       </IconButton>
-      <DropdownMenu
-        trigger={<IconButton label="Theme">{themeIcon}</IconButton>}
-        entries={[
-          { label: "Dark", icon: <Moon className="h-3.5 w-3.5" />, checked: settings.theme === "dark", onSelect: () => set("theme", "dark") },
-          { label: "Light", icon: <Sun className="h-3.5 w-3.5" />, checked: settings.theme === "light", onSelect: () => set("theme", "light") },
-          { label: "Glass", icon: <Sparkles className="h-3.5 w-3.5" />, checked: settings.theme === "glass", onSelect: () => set("theme", "glass") },
-          { label: "System", icon: <Monitor className="h-3.5 w-3.5" />, checked: settings.theme === "system", onSelect: () => set("theme", "system") },
-        ]}
-      />
       <DropdownMenu
         trigger={
           <IconButton label="More tools">
