@@ -144,7 +144,6 @@ export function Viewer() {
       if (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT") return;
       if (t.closest?.('[role="menu"],[role="dialog"],[role="listbox"]')) return;
       const ctrl = e.ctrlKey || e.metaKey;
-      poke();
       let handled = true;
       switch (e.key) {
         case "ArrowLeft":
@@ -239,6 +238,10 @@ export function Viewer() {
         }
       }
       if (handled) {
+        // Keyboard shortcuts should never summon the viewer chrome. Mouse movement
+        // remains the way to reveal the controls.
+        window.clearTimeout(hideTimer.current);
+        setControls(false);
         e.preventDefault();
         e.stopPropagation();
       }

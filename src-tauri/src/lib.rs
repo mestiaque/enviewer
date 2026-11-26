@@ -5,7 +5,7 @@ mod state;
 
 use commands::{data, files, library, tools, update};
 use state::AppState;
-use tauri::{Emitter, Manager};
+use tauri::{Emitter, LogicalSize, Manager};
 
 /// In the app data folder while Always on top needs XWayland.
 pub(crate) const XWAYLAND_MARKER: &str = "use-xwayland";
@@ -68,6 +68,18 @@ pub fn run() {
             protocol::handle(ctx.app_handle(), request, responder);
         })
         .setup(|app| {
+            // Open at half the monitor's logical width and height (one quarter
+            // of its area), centred on the primary display.
+            if let Some(window) = app.get_webview_window("main") {
+                if let Ok(Some(monitor)) = window.current_monitor() {
+                    let size = monitor.size();
+                    let scale = monitor.scale_factor();
+                    let width = (size.width as f64 / scale * 0.5).max(480.0);
+                    let height = (size.height as f64 / scale * 0.5).max(320.0);
+                    let _ = window.set_size(LogicalSize::new(width, height));
+                    let _ = window.center();
+                }
+            }
             let data_dir = app.path().app_data_dir()?;
             let cache_dir = app.path().app_cache_dir()?;
             let state = AppState::new(data_dir, cache_dir).map_err(|e| Box::new(std::io::Error::other(e.to_string())))?;
