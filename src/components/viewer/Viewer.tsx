@@ -127,7 +127,7 @@ export function Viewer() {
   useEffect(() => {
     if (open) poke();
     return () => window.clearTimeout(hideTimer.current);
-  }, [open, index, poke]);
+  }, [open, poke]);
 
   const rotate = (d: number) => setTransform((t) => ({ ...t, rotation: t.rotation + d }));
   const resetView = () => {
